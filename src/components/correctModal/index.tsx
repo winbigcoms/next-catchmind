@@ -1,5 +1,4 @@
 import ReactDOM from "react-dom";
-
 import styled from "styled-components";
 
 const ModalConatiner = styled.div`
@@ -11,6 +10,7 @@ const ModalConatiner = styled.div`
   background-color: rgba(0, 0, 0, 0.6);
   z-index: 2;
 `;
+
 const ModalBox = styled.div`
   position: absolute;
   left: 50%;
@@ -32,12 +32,13 @@ const ModalBox = styled.div`
 
 interface AnswerPopupProps {
   name: string;
+  open: boolean;
 }
 
 const Correct = (props: AnswerPopupProps): JSX.Element => {
-  const { name } = props;
+  const { name, open } = props;
 
-  return (
+  return open ? (
     <ModalConatiner className="pyro">
       <div className="before"></div>
       <div className="after"></div>
@@ -50,12 +51,18 @@ const Correct = (props: AnswerPopupProps): JSX.Element => {
         <img src="./img/12.png" alt="" />
       </ModalBox>
     </ModalConatiner>
-  );
+  ) : null;
 };
 
-export const CorrectModal = ({ name }: { name: string }) => {
+export const CorrectModal = ({
+  name,
+  open,
+}: {
+  name: string;
+  open: boolean;
+}) => {
   return ReactDOM.createPortal(
-    <Correct name={name} />,
+    <Correct name={name} open={open} />,
     document.getElementById("modal") as HTMLElement
   );
 };

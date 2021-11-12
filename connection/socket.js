@@ -1,4 +1,5 @@
 const socketIo = require("socket.io");
+const mongoClient = require("./mongo");
 
 function connectSocket(server) {
   const io = socketIo(server, {
@@ -14,13 +15,25 @@ function connectSocket(server) {
   let artist = "";
   let duplicateLogin = [];
 
+  mongoClient.connect(async (err) => {
+    const findedSubtitle = await mongoClient
+      .db("catchmind")
+      .collection("subtitles")
+      .findOne()
+      .then((res) => res);
+
+    subTitles = findedSubtitle.subTitles;
+    subTitle = subTitles[Math.floor(Math.random() * subTitles.length)];
+
+    mongoClient.close();
+  });
+
   io.on("connection", (socket) => {
     socket.on("users", (data) => {
       socket.nickName = data.nickName;
       if (
         userArray.filter((user) => user.nickName === data.nickName).length !== 0
       ) {
-        console.log("중복접속");
         duplicateLogin.push(data.nickName);
         io.to(socket.id).emit("alreadLogin");
         return;
@@ -46,9 +59,6 @@ function connectSocket(server) {
       const who = userArray.find((data) => data.nickName === socket.nickName);
       if (data.value === subTitle) {
         io.sockets.emit("goldenCorrect", who.nickName);
-        artist =
-          userArray[Math.floor(Math.random() * userArray.length)].nickName;
-        subTitle = subTitles[Math.floor(Math.random() * 3)];
       }
       io.sockets.emit("chatting", data);
     });
@@ -58,32 +68,13 @@ function connectSocket(server) {
     });
 
     socket.on("newGame", () => {
-      if (subTitles.length === 0) {
-        const collection = mongo.db("catchmind").collection("subtitles");
+      subTitle = subTitles[Math.floor(Math.random() * subTitles.length)];
+      artist = userArray[Math.floor(Math.random() * userArray.length)].nickName;
 
-        collection
-          .find({})
-          .sort({ _id: -1 })
-          .limit(1)
-          .toArray()
-          .then((res) => {
-            subTitles = res[0].subTitles;
-            subTitle = res[0].subTitles[Math.floor(Math.random() * 3)];
-            console.log(res);
-            console.log(subTitles);
-            console.log(subTitle);
-          })
-          .catch((err) => {
-            console.log(err);
-            client.close();
-          });
-      } else {
-        socket.emit("newGame", {
-          subTitle,
-          artist: userArray.filter((data) => data.nickName === artist)[0]
-            .nickName,
-        });
-      }
+      io.sockets.emit("newGame", {
+        subTitle,
+        artist: artist,
+      });
     });
 
     socket.on("disconnect", () => {
@@ -93,9 +84,11 @@ function connectSocket(server) {
         );
         return;
       }
+
       userArray = userArray.filter((data) => data.nickName !== socket.nickName);
 
       socket.broadcast.emit("recivedUsers", userArray);
+
       if (socket.nickName === artist) {
         artist =
           userArray.length !== 0
@@ -104,7 +97,7 @@ function connectSocket(server) {
 
         const newArtist =
           userArray.length !== 0
-            ? userArray.filter((data) => data.nickName === artist)[0].name
+            ? userArray.filter((data) => data.nickName === artist)[0].nickName
             : "";
 
         socket.broadcast.emit("artistClose", {

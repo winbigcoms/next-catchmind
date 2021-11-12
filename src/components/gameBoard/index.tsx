@@ -47,7 +47,7 @@ export const GameBoard = ({ socket }: SocketType) => {
   const sendAnswer = useCallback((e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       const value = (e.target as HTMLInputElement).value;
-      socket.emit("chatting", { value, user: user.pid });
+      socket.emit("chatting", { value, user: user.nickName });
       (e.target as HTMLInputElement).value = "";
     }
   }, []);
@@ -64,6 +64,7 @@ export const GameBoard = ({ socket }: SocketType) => {
     if (!user.name) {
       router.push("/");
     }
+    console.log(user);
 
     socket.emit("users", user);
 
@@ -75,7 +76,10 @@ export const GameBoard = ({ socket }: SocketType) => {
       onCorrect(data);
       const timeOut = setTimeout(() => {
         closeCorrect();
-        socket.emit("newGame");
+        console.log(user, data);
+        if (user.nickName === data) {
+          socket.emit("newGame");
+        }
         clearTimeout(timeOut);
       }, 4000);
     });
@@ -129,7 +133,9 @@ export const GameBoard = ({ socket }: SocketType) => {
         />
       </UserRow>
       <InputAnswer sendAnswer={sendAnswer} />
-      {goldenCorrect.state && <CorrectModal name={goldenCorrect.name} />}
+      {goldenCorrect.state && (
+        <CorrectModal name={goldenCorrect.name} open={goldenCorrect.state} />
+      )}
     </GameContainer>
   );
 };

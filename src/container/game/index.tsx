@@ -15,6 +15,7 @@ export const GameContainer = () => {
     <>
       <GameHeader />
       <GameBoard socket={socket} />
+      <div id="modal" />
     </>
   );
 };

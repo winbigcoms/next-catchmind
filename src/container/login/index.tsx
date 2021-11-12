@@ -119,7 +119,6 @@ export const LoginContainer = () => {
   };
 
   const playGame = async () => {
-    console.log(id);
     dispatch(getUserRequest(id));
   };
 

@@ -18,15 +18,18 @@ const CanvasConatainer = styled.div`
   justify-content: center;
   position: relative;
 `;
+
 const Canvas = styled.canvas`
   border: 1px solid #000;
 `;
+
 const ColorPickerBtn = styled.button`
   position: absolute;
   top: 0;
   right: 0;
   background-color: #fff;
 `;
+
 const ColorPickerBox = styled.div`
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -37,6 +40,7 @@ const ColorPickerBox = styled.div`
   background-color: #fff;
   z-index: 1;
 `;
+
 const RangeBox = styled.div`
   display: flex;
   justify-content: center;
@@ -47,6 +51,7 @@ const RangeBox = styled.div`
     margin-left: 10px;
   }
 `;
+
 const Answer = styled.div`
   position: absolute;
   top: 1px;
@@ -54,6 +59,7 @@ const Answer = styled.div`
   background-color: #fff;
   border: 1px solid #ddd;
 `;
+
 const ResetBtn = styled.button`
   position: absolute;
   bottom: 1px;
@@ -61,6 +67,7 @@ const ResetBtn = styled.button`
   background-color: #fff;
   border: 1px solid #ddd;
 `;
+
 const SaveBtn = styled.button`
   position: absolute;
   bottom: 1px;
@@ -68,24 +75,29 @@ const SaveBtn = styled.button`
   background-color: #fff;
   border: 1px solid #ddd;
 `;
+
 const EraserBtn = styled.button`
   cursor: pointer;
   margin: 10px 0px 5px 5px;
   background-color: #fff;
   border: 1px solid #ccc;
 `;
+
 const TextBox = styled.span`
   display: inline-block;
   width: 66px;
 `;
+
 interface canvasProps extends SocketType {
   width: number;
   height: number;
 }
+
 interface location {
   x: number;
   y: number;
 }
+
 function downloadImage(data = "", filename = "untitled.jpeg") {
   const a = document.createElement("a");
   a.href = data;
@@ -101,28 +113,35 @@ const CanvasLayer: React.FC<canvasProps> = ({
   width,
   height,
 }: canvasProps) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { color, changeColor } = useColors();
   const [drawAble, setDrawAble] = useState({ isMyturn: false, artist: "" });
   const [showColorPicker, setShowState] = useState(false);
   const [useEraser, setEraser] = useState(false);
   const [strokeWidth, setStrokeWidth] = useState(2);
   const [eraserWidth, setEraserWidth] = useState(20);
+  const [subtitle, setSubtitle] = useState("");
+
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const { color, changeColor } = useColors();
+
   const { mousePosition, onPaint, changeMousePosition, changePaintState } =
     useDraw();
-  const [subtitle, setSubtitle] = useState("");
+
   const user = useSelector((state: RootState) => state.user);
+
   const changeEraser = useCallback(() => {
     setEraser((state) => {
       socket.emit("pencilState", !state);
       return !state;
     });
   }, []);
+
   const changeAutoEraser = useCallback(() => {
     setEraser((state) => {
       return !state;
     });
   }, []);
+
   const changeArtist = useCallback((data) => {
     setDrawAble(() => data);
   }, []);
@@ -135,6 +154,7 @@ const CanvasLayer: React.FC<canvasProps> = ({
       y: event.pageY - canvas.offsetTop,
     };
   }, []);
+
   const getAutoLocation = useCallback(({ x, y }: location): location | void => {
     if (!canvasRef.current) return;
     const canvas: HTMLCanvasElement = canvasRef.current;
@@ -143,6 +163,7 @@ const CanvasLayer: React.FC<canvasProps> = ({
       y: y - canvas.offsetTop,
     };
   }, []);
+
   const changeShowState = useCallback(() => {
     if (!drawAble.isMyturn) return;
     setShowState((state) => !state);
@@ -176,20 +197,25 @@ const CanvasLayer: React.FC<canvasProps> = ({
     changePaintState(false);
     socket.emit("stopPaint");
   }, []);
+
   const stopAutoPaint = useCallback(() => {
     changePaintState(false);
   }, []);
+
   const changeStroke = useCallback((e) => {
     socket.emit("pencilStroke", e.target.value);
     setStrokeWidth(() => e.target.value);
   }, []);
+
   const changeAutoStroke = useCallback((value) => {
     setStrokeWidth(() => value);
   }, []);
+
   const changeEraserStroke = useCallback((e) => {
     socket.emit("eraserStroke", e.target.value);
     setEraserWidth(() => e.target.value);
   }, []);
+
   const changeAutoEraserStroke = useCallback((value) => {
     setEraserWidth(() => value);
   }, []);
@@ -200,7 +226,7 @@ const CanvasLayer: React.FC<canvasProps> = ({
       const canvas: HTMLCanvasElement = canvasRef.current;
       const ctx = canvas.getContext("2d");
       const relPosition = canvas.getBoundingClientRect();
-      console.log(relPosition.x);
+
       if (ctx) {
         ctx.strokeStyle = useEraser ? "#ffffff" : color;
         ctx.lineJoin = "round";
@@ -240,9 +266,12 @@ const CanvasLayer: React.FC<canvasProps> = ({
   const resetPath = useCallback(() => {
     if (!drawAble.isMyturn) return;
     if (!canvasRef.current) return;
+
     socket.emit("resetPaint");
+
     const canvas: HTMLCanvasElement = canvasRef.current;
     const ctx = canvas.getContext("2d");
+
     if (ctx) {
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -258,6 +287,22 @@ const CanvasLayer: React.FC<canvasProps> = ({
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
   }, []);
+
+  const autoPaint = useCallback(
+    ({
+      mousePosition,
+      newLocation,
+    }: {
+      mousePosition: location;
+      newLocation: location;
+    }) => {
+      if (mousePosition && newLocation) {
+        draw(mousePosition, newLocation);
+        changeMousePosition(newLocation);
+      }
+    },
+    [color, eraserWidth, strokeWidth, useEraser]
+  );
 
   const savePaint = () => {
     const data = canvasRef.current?.toDataURL("image/jpeg", 1.0);
@@ -295,7 +340,6 @@ const CanvasLayer: React.FC<canvasProps> = ({
       setSubtitle(() => data);
     });
     socket.on("drowStart", (data) => {
-      console.log("123");
       startAutoPaint(data);
     });
     socket.on("artist", (data) => {
@@ -318,13 +362,13 @@ const CanvasLayer: React.FC<canvasProps> = ({
       changeAutoEraserStroke(state);
     });
     socket.on("artistClose", (state) => {
-      console.log("1");
       changeArtist({
         isMyturn: user.pid === state.isMyturn ? true : false,
         artist: state.artist,
       });
     });
   }, []);
+
   useEffect(() => {
     socket.on("newGame", (data) => {
       resetPath();
@@ -332,28 +376,11 @@ const CanvasLayer: React.FC<canvasProps> = ({
       setSubtitle(() => data.subTitle);
       setShowState((state) => (state ? false : false));
       setDrawAble(() => ({
-        isMyturn: user.name === data.artist ? true : false,
+        isMyturn: user.nickName === data.artist ? true : false,
         artist: data.artist,
       }));
     });
   }, []);
-
-  const autoPaint = useCallback(
-    ({
-      mousePosition,
-      newLocation,
-    }: {
-      mousePosition: location;
-      newLocation: location;
-    }) => {
-      console.log("1");
-      if (mousePosition && newLocation) {
-        draw(mousePosition, newLocation);
-        changeMousePosition(newLocation);
-      }
-    },
-    [color, eraserWidth, strokeWidth, useEraser]
-  );
 
   useEffect(() => {
     socket.on("drawing", autoPaint);
