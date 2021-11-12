@@ -1,0 +1,23 @@
+{
+  "presets": ["next/babel"],
+  "plugins": [
+    [
+      "styled-components",
+      { "fileName": true, "displayName": true, "pure": true, "ssr": true }
+    ],
+    [
+      "module-resolver",
+      {
+        "root": ["./"],
+        "alias": {
+          "pages": "./pages",
+          "components": "./src/components",
+          "service": "./src/service",
+          "container": "./src/container",
+          "store": "./store"
+        },
+        "extensions": [".js", ".jsx", ".tsx"]
+      }
+    ]
+  ]
+}
