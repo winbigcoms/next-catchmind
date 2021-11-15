@@ -48,7 +48,6 @@ router.post("/api/login", (req, res) => {
       mongoClient.close();
     });
   } catch (err) {
-    console.log(err);
     res.send(false);
   }
 });

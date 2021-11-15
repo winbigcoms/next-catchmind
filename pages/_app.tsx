@@ -10,10 +10,12 @@ const WrappedComponent: NextPage<AppProps> = ({
   pageProps,
 }: AppProps) => {
   return (
-    <ThemeProvider theme={theme}>
-      <GlobalStyle />
-      <Component {...pageProps} />
-    </ThemeProvider>
+    <>
+      <ThemeProvider theme={theme}>
+        <GlobalStyle />
+        <Component {...pageProps} />
+      </ThemeProvider>
+    </>
   );
 };
 

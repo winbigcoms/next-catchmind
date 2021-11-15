@@ -62,7 +62,7 @@ const SignUp = () => {
   };
 
   const goLoginPage = () => {
-    router.push("/login");
+    router.push("/");
   };
 
   const singUpClick = async () => {
@@ -81,8 +81,6 @@ const SignUp = () => {
         sendData,
         config
       );
-      console.log(signUpResponse);
-
       if (signUpResponse) goLoginPage();
     } catch (e) {
       console.log(e);
