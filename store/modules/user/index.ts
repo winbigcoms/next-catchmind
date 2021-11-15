@@ -15,7 +15,7 @@ const userSlice = createSlice({
   reducers: userReducer,
 });
 
-export const { getUserRequest, getUserSuccess, changeUserInfo } =
+export const { getUserRequest, logoutUser, getUserSuccess, changeUserInfo } =
   userSlice.actions;
 
 export default userSlice.reducer;

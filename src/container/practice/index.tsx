@@ -17,7 +17,7 @@ export const PracticeContainer = () => {
   return (
     <StyledDiv>
       <PracticeCanvasLayer width={700} height={700} />
-      <Link href="/login">로그인 화면으로</Link>
+      <Link href="/">로그인 화면으로</Link>
     </StyledDiv>
   );
 };

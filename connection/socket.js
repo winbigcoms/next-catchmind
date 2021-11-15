@@ -31,6 +31,7 @@ function connectSocket(server) {
   io.on("connection", (socket) => {
     socket.on("users", (data) => {
       socket.nickName = data.nickName;
+
       if (
         userArray.filter((user) => user.nickName === data.nickName).length !== 0
       ) {

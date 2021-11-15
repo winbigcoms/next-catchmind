@@ -64,8 +64,6 @@ export const GameBoard = ({ socket }: SocketType) => {
     if (!user.name) {
       router.push("/");
     }
-    console.log(user);
-
     socket.emit("users", user);
 
     socket.on("recivedUsers", (data) => {
@@ -76,7 +74,6 @@ export const GameBoard = ({ socket }: SocketType) => {
       onCorrect(data);
       const timeOut = setTimeout(() => {
         closeCorrect();
-        console.log(user, data);
         if (user.nickName === data) {
           socket.emit("newGame");
         }

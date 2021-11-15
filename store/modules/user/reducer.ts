@@ -19,4 +19,10 @@ export const userReducer = {
     state.nickName = action.payload.nickName;
     state.img = action.payload.img;
   },
+  logoutUser: (state: UserState, action: PayloadAction<LoginUser>) => {
+    state.img = "";
+    state.loading = false;
+    state.name = "";
+    state.nickName = "";
+  },
 };

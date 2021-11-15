@@ -22,7 +22,7 @@ const GameHeaderContents = () => {
   return (
     <Header>
       <h2>캐치마인드</h2>
-      <button onClick={() => router.push("/login")}>나가기</button>
+      <button onClick={() => router.push("/")}>나가기</button>
     </Header>
   );
 };

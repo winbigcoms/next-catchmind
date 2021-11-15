@@ -5,7 +5,6 @@ import { getUserRequest } from "store/modules/user";
 import styled, { keyframes } from "styled-components";
 import { theme } from "../../../const";
 import { ContentsBox, FallingSnow } from "../../components";
-import { API } from "../../service/index";
 
 const BoxShow = keyframes`
   0%{
@@ -28,6 +27,7 @@ const ThemeBox = styled.div`
   box-sizing: border-box;
   width: 150px;
   animation: ${BoxShow} 1s 1 both;
+
   & > div {
     display: flex;
     flex-wrap: wrap;
@@ -44,6 +44,7 @@ const ExampleBox = styled.div<{ bg: string; fl: string }>`
   height: 50px;
   background: ${(props) => props.bg};
   margin: 5px;
+
   span {
     position: absolute;
     width: 50px;
@@ -71,6 +72,10 @@ const SetThemeBtn = styled.button`
   transition: all 0.3s;
   &:hover {
     background-color: rgba(255, 255, 255, 0.5);
+  }
+
+  &:nth-child(2) {
+    left: 120px !important;
   }
 `;
 
@@ -126,6 +131,10 @@ export const LoginContainer = () => {
     router.push("/signUp");
   };
 
+  const goPractice = () => {
+    router.push("/practice");
+  };
+
   return (
     <ContentsBox color={bgTheme.bg}>
       <LoginFormBox>
@@ -157,6 +166,14 @@ export const LoginContainer = () => {
           </div>
         </ThemeBox>
       )}
+      <SetThemeBtn
+        style={{
+          left: "120px",
+        }}
+        onClick={goPractice}
+      >
+        연습하기
+      </SetThemeBtn>
       <SetThemeBtn onClick={changeShowThemeBox}>테마 변경</SetThemeBtn>
       <FallingSnow color={bgTheme.fl} />
     </ContentsBox>

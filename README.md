@@ -1,1 +1,16 @@
-This is a starter template for [Learn Next.js](https://nextjs.org/learn).
+FE: nextjs
+
+BE: express
+
+소켓을 이용한 캐치마인드
+
+페이지
+
+- 로그인
+- 회원가입
+- 게임
+
+추가할 점
+
+- 소켓은 실시간 통신간 데이터를 받는 거라 접속 이전의 그림이 보이지 않음 > webRTC적용 필요
+- 저장된 이미지 파일이 큼. webp 확장자로 변경 필요

@@ -8,7 +8,6 @@ const useMessage = (): [string[], (data: string) => void] => {
   }, []);
 
   const cutMsgInterval = useCallback(() => {
-    console.log(messages.length);
     const interval = setInterval(() => {
       if (messages.length === 0) {
         clearInterval(interval);

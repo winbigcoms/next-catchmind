@@ -15,6 +15,7 @@ const Login = () => {
       router.push("/game");
     }
   }, [login.name]);
+
   return <LoginContainer />;
 };
 
